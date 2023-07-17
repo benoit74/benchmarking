@@ -1,0 +1,67 @@
+version: '3.3'
+
+services:
+
+  collectd_exporter:
+    image: prom/collectd-exporter:latest
+    container_name: collectd_exporter
+    command: --collectd.listen-address=":25826"
+    networks:
+      - benchmarking-network
+    ports:
+      - 25826:25826/udp
+      - 9103:9103
+
+  prom_node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: prom_node_exporter
+    command:
+      - '--path.rootfs=/host'
+    networks:
+      - benchmarking-network
+    volumes:
+      - /proc:/host/proc
+      - /sys:/host/sys
+    ports:
+      - 9100:9100
+
+  fluentbit:
+    image: fluent/fluent-bit:latest
+    container_name: fluentbit
+    ports:
+      - 2021:2021
+    networks:
+      - benchmarking-network
+    volumes:
+      - /proc:/host/proc
+      - /sys:/host/sys
+      - ./conf/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - ./config/grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - benchmarking-network
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./conf/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    networks:
+      - benchmarking-network
+    ports:
+      - 9090:9090
+
+networks:
+  benchmarking-network:
