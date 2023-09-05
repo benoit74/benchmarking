@@ -24,3 +24,25 @@ We had to compliment the `monitored_node` with a `compactor` which is responsibl
 `ndjson` files. Elastic `metricbeat` is capable to rotate files but does not compact rotated ones automatically.
 These files are however very good candidates for compaction, achieving up to x10 compaction rate with default
 GZip compaction.
+
+## Howto
+
+### Start the stack on a `monitored_node`
+
+Retrieve source code (git clone, curl a zip release, ...).
+
+Adjust the metricbeat image depending on your node architecture (and upgrade if you wish) in `monitored_node/docker-compose.yml`
+
+Run the docker-compose stack:
+```
+cd monitored_node
+docker compose -p bench up -d
+```
+
+Metricbeat recorded data will be placed in an `output` subfolder, and compressed by `compactor` in an `output/compressed` subfolder.
+
+### How-to do that if `monitored_node` has no Internet access
+
+It is not straightforward under all situations. In our case, we simply get the SD Card from the Pi Zero and plug
+it to another Pi (3/4/...) with Internet access. Then we retrieve what is needed (source code + Docker image) and 
+re-plug the SD Card back into the Pi Zero.
