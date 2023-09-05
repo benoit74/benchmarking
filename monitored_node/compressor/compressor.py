@@ -4,6 +4,8 @@ import tarfile
 from pathlib import Path
 from time import sleep
 
+COMPRESSED_SUBFOLDER = "compressed"
+
 
 def compressor():
     parser = argparse.ArgumentParser(
@@ -43,14 +45,21 @@ def compressor():
             print("--input must be a directory")
             exit(1)
 
+        input_path.joinpath(COMPRESSED_SUBFOLDER).mkdir(exist_ok=True)
+
         all_files_names = sort_files_produced(
             list(map(lambda path: path.name[:-7], input_path.glob("*.ndjson")))
         )
 
         for name in all_files_names[:-1]:
             orig_path = input_path.joinpath(f"{name}.ndjson")
-            dest_path = input_path.joinpath(f"{name}.ndjson.tar.gz")
-            print(f"Compressing {orig_path.name} to {dest_path.name}")
+            dest_path = input_path.joinpath(
+                COMPRESSED_SUBFOLDER, f"{name}.ndjson.tar.gz"
+            )
+            print(
+                f"Compressing {orig_path.name} to {COMPRESSED_SUBFOLDER}/"
+                f"{dest_path.name}"
+            )
             with tarfile.open(dest_path, "w:gz") as archive:
                 archive.add(orig_path)
             orig_path.unlink()
