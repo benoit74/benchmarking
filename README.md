@@ -1,31 +1,26 @@
+# Benchmarking
 
-## Stack
+## Purpose
 
-### Overview
+This project is a benchmarking solution to:
+- record system and docker metrics on a small node without Internet connectivity
+  - this node is named `monitored_node` for simplicity is the rest of the documentation
+- exploit those metrics on another node with nice dashboard
+  - this node is named `analysis_node` for simplicity is the rest of the documentation
 
-### Components
+Our use-case is to record monitoring data on a Pi Zero (`monitored_node`) running our offpost,
+while performing various activities on the web interface (browse Zims, ...). Since the Pi Zero 
+is used as a Hotspot (i.e. no Internet and very limited network connectivity) and has limited 
+computing power, we need a stack which is lightweight and capable to record data for further analysis
+on any other machine with bigger CPU / RAM (`analysis_node`). We also need this architecture to limit
+the impact of the monitoring stack on the monitored device.
 
-- collectd: collect metrics from the host/node
-- collectd_exporter: receive collectd data and expose them in a Prometheus format
-- prom_node_exporter: collect metrics from the host/node and expose them in a Prometheus format
-- fluent_bit: collect metrics from host and from Docker and expose them in a Prometheus format
-- prometheus: scrape targets exposing metrics and store them in a local database
-- grafana: expose nice dashboards of data residing in prometheus DB
+## Overview
 
+Elastic `metricbeat` has been selected to record system and docker activity. It has the advantage
+to be able to output recorded data in `ndjson` files, 
 
-### Overlap
-There is functional overlap between collectd, prom_node_exporter and the node_exporter input of fluent_bit. All of them are exporting host metrics. Unfortunately, there is no silver bullet. 
-
-The node_exporter of fluent_bit is for now more limited than prom_node_exporter.
-
-Prom_node_exporter is for now more limited than collectd plus there is no official Docker image for ARM plus it is not clear wether it is a good idea to run it within a container.
-
-Collectd is for instance the single system which can collect metrics about an individual process. But on another hand, collectd does not have an official Docker image and its exporter has no ARM Docker image. 
-
-## Deployment
-
-Confirm that you can live without collectd and Prometheus node exporter. If so, you can deploy the stack with docker-compose simply, and without the collectd_exporter and prom_node_exporter containers.
-
-If you need prom_node_exporter, it is simply a matter of keeping it in docker-compose.
-
-If you need collectd, you have to keep collectd_exporter in docker-compose + install collectd on the host + place collectd.conf manually at the right place (/etc/collectd/collectd.conf).
+We had to compliment the `monitored_node` with a `compactor` which is responsible to compact rotated
+`ndjson` files. Elastic `metricbeat` is capable to rotate files but does not compact rotated ones automatically.
+These files are however very good candidates for compaction, achieving up to x10 compaction rate with default
+GZip compaction.

@@ -2,46 +2,69 @@ version: '3.3'
 
 services:
 
-  fluentbit:
-    image: fluent/fluent-bit:latest
-    container_name: fluentbit
-    ports:
-      - 2021:2021
-    networks:
-      - benchmarking-network
+  metricbeat:
+    #image: docker.elastic.co/beats/metricbeat-oss:8.9.1-arm64
+    image: docker.elastic.co/beats/metricbeat-oss:8.9.1-amd64
+    container_name: metricbeat
     volumes:
-      - /proc:/host/proc
-      - /sys:/host/sys
-      - ./conf/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /data/docker/containers/:/var/lib/docker/containers/
-      - /sys/fs/cgroup:/sys/fs/cgroup
+      - ./conf/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - ./output:/output
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /proc:/hostfs/proc:ro
+      - /:/hostfs:ro
+    user: root
+    command: ["--strict.perms=false"]
 
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    depends_on:
-      - prometheus
-    ports:
-      - 3000:3000
+  compressor:
+    build: ./compressor
+    container_name: compressor
     volumes:
-      - ./conf/grafana/provisioning:/etc/grafana/provisioning
-    networks:
-      - benchmarking-network
+      - ./output:/output
+    user: root
+    command: ["--input", "/output"]
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - PYTHONUNBUFFERED=1
+#   fluentbit:
+#     image: fluent/fluent-bit:latest
+#     container_name: fluentbit
+#     ports:
+#       - 2021:2021
+#     networks:
+#       - benchmarking-network
+#     volumes:
+#       - /proc:/host/proc
+#       - /sys:/host/sys
+#       - ./conf/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+#       - /var/run/docker.sock:/var/run/docker.sock
+#       - /data/docker/containers/:/var/lib/docker/containers/
+#       - /sys/fs/cgroup:/sys/fs/cgroup
 
-  prometheus:
-    container_name: prometheus
-    image: prom/prometheus:latest
-    volumes:
-      - ./conf/prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
-    networks:
-      - benchmarking-network
-    ports:
-      - 9090:9090
+#   grafana:
+#     image: grafana/grafana:latest
+#     container_name: grafana
+#     depends_on:
+#       - prometheus
+#     ports:
+#       - 3000:3000
+#     volumes:
+#       - ./conf/grafana/provisioning:/etc/grafana/provisioning
+#     networks:
+#       - benchmarking-network
+#     environment:
+#       - GF_SECURITY_ADMIN_PASSWORD=admin
 
-networks:
-  benchmarking-network:
+#   prometheus:
+#     container_name: prometheus
+#     image: prom/prometheus:latest
+#     volumes:
+#       - ./conf/prometheus.yml:/etc/prometheus/prometheus.yml
+#     command:
+#       - --config.file=/etc/prometheus/prometheus.yml
+#     networks:
+#       - benchmarking-network
+#     ports:
+#       - 9090:9090
+
+# networks:
+#   benchmarking-network:
