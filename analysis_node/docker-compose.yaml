@@ -122,6 +122,9 @@ services:
       - echo "Done"
 
   uploader:
+    depends_on:
+      metricbeat-setup:
+        condition: service_completed_successfully
     build: ./uploader
     volumes:
       - ./input:/input
