@@ -4,19 +4,19 @@
 
 This project is a benchmarking solution to:
 - record system and docker metrics on a node (named `monitored_node`) 
-  - this node might have no Internet connectivity and limited computing / memory
+  - this node has limited computing / memory (and maybe no LAN / Internet connectivity)
 - exploit those metrics on another node (named `analysis_node`) with dashboards for manual interpretation
 
 ![Sample Host dashboard](host_dashboard.png)
 
 ![Sample Docker dashboard](docker_dashboard.png)
 
-Many use-case are possible, our first one was to record monitoring data on a Pi Zero (`monitored_node`) running our offpost,
-while performing various activities on the web interface (browse Zims, ...). Since the Pi Zero 
-is used as a Hotspot (i.e. no Internet and very limited network connectivity) and has limited 
-computing power, we need a stack which is lightweight and capable to record data for further analysis
-on any other machine with bigger CPU / RAM (`analysis_node`). We also need this architecture to limit
-the impact of the monitoring stack on the monitored device.
+Many use-case are possible, our first one was to record monitoring data on a Pi 3 (`monitored_node`) 
+running our offpost, while performing various activities on the web interface (browse Zims, ...). 
+Since the Pi 3 has limited computing power, we need a stack which is lightweight and capable to 
+record data for further analysis on any other machine with bigger CPU / RAM (`analysis_node`). This
+is made even more important by the fact that we don't wan't to assume that the Pi has LAN connectivity
+since we might need to use this benchmarking stack on the field.
 
 
 ## Overview
