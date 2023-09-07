@@ -8,8 +8,13 @@ as of 2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- `analysis_node`: Upload container must wait for full ES setup completion
+
 ### Added
-- systemctl sample files + instructions
+- `monitored_node`: systemctl sample files + instructions
+- `analysis_node`: documentation for cleanup
+- input and output folder are now part of the repo / release (empty)
 
 ## [0.0.1]
 
