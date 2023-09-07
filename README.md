@@ -51,12 +51,46 @@ docker compose -p bench up -d
 
 By default, Metricbeat recorded data will be placed in `monitored_node/output`, and compressed by `compactor` in an `monitored_node/output/compressed`. Feel free to change this in `monitored_node/docker-compose.yml`.
 
+### Add systemctl services
+
+If you want the stack to restart everytime the host starts, you might add systemctl services:
+
+```
+cp systemctl/benchmarking-compressor.service /etc/systemd/system/benchmarking-compressor.service
+cp systemctl/benchmarking-metricbeat.service /etc/systemd/system/benchmarking-metricbeat.service
+```
+
+Start them:
+```
+systemctl start benchmarking-compressor.service
+systemctl start benchmarking-metricbeat.service
+```
+
+Check their status:
+```
+systemctl status benchmarking-compressor.service
+systemctl status benchmarking-metricbeat.service
+```
+
+Enable them for execution at every startup:
+```
+systemctl enable benchmarking-compressor.service
+systemctl enable benchmarking-metricbeat.service
+```
+
 ### Stop the stack on `monitored_node`
 
-Stop the docker-compose stack:
+Once monitoring is finished, stop the docker-compose stack:
 ```
 cd monitored_node
 docker compose -p bench down
+```
+
+or if you have installed systemctl services:
+
+```
+systemctl stop benchmarking-compressor.service
+systemctl stop benchmarking-metricbeat.service
 ```
 
 ### Start the stack on `analysis_node`

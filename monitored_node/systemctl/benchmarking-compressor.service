@@ -1,0 +1,12 @@
+[Unit]
+Description=Benchmarking Stack - Compressor
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start -a bench-compressor-1
+ExecStop=/usr/bin/docker stop -t 2 bench-compressor-1
+
+[Install]
+WantedBy=default.target
