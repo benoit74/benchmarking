@@ -3,9 +3,7 @@ version: '3.3'
 services:
 
   metricbeat:
-    #image: docker.elastic.co/beats/metricbeat-oss:8.9.1-arm64
-    image: docker.elastic.co/beats/metricbeat-oss:8.9.1-amd64
-    container_name: metricbeat
+    image: docker.elastic.co/beats/metricbeat-oss:8.9.1
     volumes:
       - ./conf/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
       - ./output:/output
@@ -18,7 +16,6 @@ services:
 
   compressor:
     build: ./compressor
-    container_name: compressor
     volumes:
       - ./output:/output
     user: root
