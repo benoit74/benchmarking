@@ -133,3 +133,25 @@ Most usefull dashboard with default `metricbeat` configuration from this repo ar
 - `[Metricbeat System] Overview ECS`: if you have multiple hosts that have been monitored, you will be able to focus on only one host
 - `[Metricbeat System] Host overview ECS`: view details about one host activity
 - `[Metricbeat Docker] Overview ECS`: view details about Docker containers activity
+
+### Stop the stack on `analysis_node`
+
+Once monitoring is finished, stop the docker-compose stack:
+```
+cd analysis_node
+docker compose -p bench down
+```
+
+or if you have installed systemctl services:
+
+```
+systemctl stop benchmarking-compressor.service
+systemctl stop benchmarking-metricbeat.service
+```
+
+### Delete all Docker data on `analysis_node`
+
+```
+docker volume rm bench_esdata01
+docker volume rm bench_kibanadata
+```
