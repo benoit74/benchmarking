@@ -367,3 +367,6 @@ pyrightconfig.json
 
 # ignore all vscode, this is not standard configuration in this place
 .vscode
+
+# data archive from perf tests should not be pushed to git
+*.tar.gz

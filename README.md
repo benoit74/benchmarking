@@ -11,9 +11,9 @@ This project is a benchmarking solution to:
 
 ![Sample Docker dashboard](docker_dashboard.png)
 
-Many use-case are possible, our first one was to record monitoring data on a Pi 3 (`monitored_node`) 
-running our offpost, while performing various activities on the web interface (browse Zims, ...). 
-Since the Pi 3 has limited computing power, we need a stack which is lightweight and capable to 
+Many use-case are possible, our first one was to record monitoring data on a Pi 3 (`monitored_node`)
+running our offpost, while performing various activities on the web interface (browse Zims, ...).
+Since the Pi 3 has limited computing power, we need a stack which is lightweight and capable to
 record data for further analysis on any other machine with bigger CPU / RAM (`analysis_node`). This
 is made even more important by the fact that we don't wan't to assume that the Pi has LAN connectivity
 since we might need to use this benchmarking stack on the field.

@@ -12,7 +12,7 @@ services:
       - /proc:/hostfs/proc:ro
       - /:/hostfs:ro
     user: root
-    command: ["--strict.perms=false"]
+    command: ["--strict.perms=false", "-system.hostfs=/hostfs"]
 
   compressor:
     build: ./compressor
